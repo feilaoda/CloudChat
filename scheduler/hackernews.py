@@ -23,7 +23,7 @@ def fetch_news(url, page):
 	if res['code'] != 200:
 		return []
 	html = res['html']
-	print html
+	#print html
 	hxs = Selector(text=html)
 	trs = hxs.xpath('//body/center/table/tr[3]/td/table/tr')
 	cnt = len(trs)
