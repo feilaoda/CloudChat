@@ -9,9 +9,9 @@ from scrapy import Selector
 
 from news import session, delete_news,save_news,save_cache
 
-hackernews_url = 'https://news.ycombinator.com/news'
+hackernews_url = 'https://news.layervault.com/'
 
-Site="HackerNews"
+Site="DesignerNews"
 
 def fetch(url):
 	response = requests.get(url, timeout=60)
@@ -27,21 +27,30 @@ def fetch_news(url, news_list):
 	html = res['html']
 	#print html
 	hxs = Selector(text=html)
-	trs = hxs.xpath('//body/center/table/tr[3]/td/table/tr')
-	cnt = len(trs)
+	lis = hxs.xpath('//div[@class="Content"]/div[@class="InnerPage"]/ol/li')
+	cnt = len(lis)
 	i=0
 	print "count:",cnt
-	
-	while i<cnt:
-		tr0 = trs[i]
-		source_link = tr0.xpath('./td[@class="title"]/a/@href').extract()
-		title = tr0.xpath('./td[@class="title"]/a/text()').extract()
-		sub_title = tr0.xpath('./td[@class="title"]/span[@class="comhead"]/text()').extract()
+	for li in lis:
+		source_link = li.xpath('./a[@class="StoryUrl"]/@href').extract()
+		title = li.xpath('./a[@class="StoryUrl"]/@story_title').extract()
+		sub_title = li.xpath('./a/span/text()').extract()
+		 
+		points = li.xpath('./div[@class="Below"]/span/text()').extract()
+
+		comments = li.xpath('./div[@class="Below"]/span/a/text()').extract()
+		comments_link = li.xpath('./div[@class="Below"]/span/a/@href').extract()
 		
-		tr1 = trs[i+1]
-		points = tr1.xpath('./td[@class="subtext"]/span/text()').extract()
-		comments = tr1.xpath('./td[@class="subtext"]/a/text()').extract()
-		comments_link = tr1.xpath('./td[@class="subtext"]/a/@href').extract()
+		nid = None
+		if len(source_link)>0:
+			print source_link
+			m = re.findall('(\d+)', source_link[0])
+			if len(m)>0:
+				nid = m[0]
+		if nid is None:
+			continue
+
+
 		if len(source_link) > 0:
 			source_link = source_link[0]
 		else:
@@ -57,7 +66,7 @@ def fetch_news(url, news_list):
 			sub_title = None
 
 		if len(points)>0:
-			m = re.findall('(\d+)', points[0])
+			m = re.findall('(\d+) point', points[0])
 			if len(m)>0:
 				points = m[0]
 			else:
@@ -65,32 +74,22 @@ def fetch_news(url, news_list):
 		else:
 			points = 0
 
-		if len(comments)>1:
-			m = re.findall('(\d+)', comments[1])
+		if len(comments)>0:
+			m = re.findall('(\d+)', comments[0])
 			if len(m)>0:
 				comments = m[0]
 			else:
 				comments = 0
 		else:
 			comments = 0
-		nid = None
-		if len(comments_link)>1:
-			m = re.findall('item\?id=(\d+)', comments_link[1])
-			if len(m)>0:
-				nid = m[0]
-		if nid is None and len(comments_link)>0:
-			m = re.findall('item\?id=(\d+)', comments_link[0])
-			if len(m)>0:
-				nid = m[0]
-		if nid is None:
-			news_link = source_link
+
+		if len(comments_link)>0:
+			comments_link = comments_link[0]
 		else:
-			news_link = "https://news.ycombinator.com/item?id=%s"%(nid)
+			comments_link = None
 
-		if title is None:
-			i+=3
-			continue
 
+		
 		news = dict()
 		news['site'] = Site
 		news['newsId'] = nid
@@ -99,12 +98,12 @@ def fetch_news(url, news_list):
 		news['sourceUrl'] = source_link
 		news['voteCount'] = points
 		news['commentCount'] = comments
-		news['url'] = news_link
+		news['url'] = comments_link
 		news['createAt'] = None
 		# print link, title, points, comments, news_link
 		print news
 		news_list.append(news)
-		i+=3
+		
 
 	
 	return news_list
@@ -112,12 +111,11 @@ def fetch_news(url, news_list):
 def run():
 	# delete_news(Site)
 	news_list = []
-	fetch_news("https://news.ycombinator.com/news", news_list)
+	fetch_news("https://news.layervault.com/", news_list)
+	fetch_news("https://news.layervault.com/p/2", news_list)
+	fetch_news("https://news.layervault.com/p/3", news_list)
 	
-	fetch_news("https://news.ycombinator.com/news?p=2", news_list)
-	
-	fetch_news("https://news.ycombinator.com/news?p=3", news_list)
-	
+
 	now = datetime.now()
 	last_time = datetime(now.year, now.month, now.day, 23, 59,59)
 	first_time = datetime(now.year, now.month, now.day, 0, 0,1)

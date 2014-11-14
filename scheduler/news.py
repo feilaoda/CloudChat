@@ -26,23 +26,29 @@ class News(Base):
     __tablename__ = 'news'
     id = Column(Integer, primary_key=True)
     site = Column(String)
+    news_id = Column(Integer)
     title = Column(String)
     sub_title = Column(String)
     source_url = Column(String)
     url = Column(String)
     vote_count = Column(Integer)
     comment_count = Column(Integer)
-    create_at = Column(DateTime, default=func.now())
+    sorts = Column(Integer)
+    create_at = Column(DateTime)
 
 def delete_news(site_id):
 	db = session()
 	db.execute("delete from news where site = '%s'"%site_id)
 	db.commit()
 
-def save_news(site,news_list, page):
+def save_news(site,news_list, page=None):
 	db = session()
 	for item in news_list:
-		news = News()
+		news_id = item['newsId']
+		news =  db.query(News).filter_by(site=site, news_id=news_id).first()
+		if news is None:
+			news = News()
+
 		news.site = item['site']
 		news.title = item['title']
 		news.sub_title = item.get('subTitle')
@@ -50,6 +56,10 @@ def save_news(site,news_list, page):
 		news.url = item['url']
 		news.vote_count = item['voteCount']
 		news.comment_count = item['commentCount']
+		news.sorts = item['sorts']
+		news.news_id = item['newsId']
+		news.create_at = item['createAt']
+
 		db.add(news)
 	db.commit()
 	
