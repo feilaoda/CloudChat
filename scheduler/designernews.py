@@ -3,6 +3,7 @@
 import json
 import requests
 import re
+import logging
 from datetime import datetime, timedelta
 import time
 from scrapy import Selector
