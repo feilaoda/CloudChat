@@ -6,23 +6,13 @@ from datetime import datetime, timedelta
 import time
 from news import delete_news,save_news, save_cache
 
-
+from .fetch import fetch
 
 site_url = 'https://api.producthunt.com/v1/posts'
 
 Site="ProductHunt"
 
-def fetch(url):
-	headers = {}
-	headers['Authorization']='Bearer 2c83f63e37eb54010822cf3d90e282a940e2ee74a7dfaa486636b24e5c96cee2'
-	headers['Accept'] = 'application/json'
-	headers['Content-Type'] = 'application/json'
-	logging.debug("fetch from url: %s" % url)
-	response = requests.get(url, headers=headers, timeout=60)
-	if response.status_code != requests.codes.ok:
-	    return dict(code=response.status_code)
-	# jsonres = json.loads(response.text)
-	return dict(code=200, html=response.text)
+
 
 
 def fetch_data(date):
@@ -30,7 +20,11 @@ def fetch_data(date):
 	first_time = datetime(date.year, date.month, date.day, 0, 0,1)
 	day = date.strftime('%Y-%m-%d')
 	url = "%s?day=%s" % (site_url, day)
-	res = fetch(url)
+	headers = {}
+	headers['Authorization']='Bearer 2c83f63e37eb54010822cf3d90e282a940e2ee74a7dfaa486636b24e5c96cee2'
+	headers['Accept'] = 'application/json'
+	headers['Content-Type'] = 'application/json'
+	res = fetch(url, headers)
 	if res['code'] != 200:
 		return
 
@@ -41,6 +35,7 @@ def fetch_data(date):
 		if posts is None:
 			logging.error("PH fetch data json response has no posts data. posts == None")
 			return
+		logging.debug("fetch count: %d from %s" % (len(posts), url))
 		news_list = []
 		for post in posts:
 			news = dict()

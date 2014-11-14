@@ -4,19 +4,13 @@ import json
 import requests
 import re
 from scrapy import Selector
-
+from .fetch import fetch
 from news import session, delete_news,save_news, save_cache
 
 site_url = 'http://www.producthunt.com/'
 
 Site="ProductHunt"
 
-def fetch(url):
-	response = requests.get(url, timeout=60)
-	if response.status_code != requests.codes.ok:
-	    return dict(code=response.status_code)
-	# jsonres = json.loads(response.text)
-	return dict(code=200, html=response.text)
 
 
 def fetch_news(url, page):
@@ -29,7 +23,7 @@ def fetch_news(url, page):
 	trs = hxs.xpath('//ul[@class="posts-group"]/li')
 	cnt = len(trs)
 	i=0
-	print "count:",cnt
+	logging.debug("fetch count: %d from %s" % (cnt, url))
 	news_list = []
 	for tr0 in trs:
 		points = tr0.xpath('./div/span[@class="vote-count"]/text()').extract()

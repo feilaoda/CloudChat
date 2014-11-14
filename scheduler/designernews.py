@@ -6,18 +6,13 @@ import re
 from datetime import datetime, timedelta
 import time
 from scrapy import Selector
-
+from .fetch import fetch
 from news import session, delete_news,save_news,save_cache
 
 hackernews_url = 'https://news.layervault.com/'
 
 Site="DesignerNews"
 
-def fetch(url):
-	response = requests.get(url, timeout=60)
-	if response.status_code != requests.codes.ok:
-	    return dict(code=response.status_code)
-	return dict(code=200, html=response.text)
 
 
 def fetch_news(url, news_list):
@@ -30,7 +25,7 @@ def fetch_news(url, news_list):
 	lis = hxs.xpath('//div[@class="Content"]/div[@class="InnerPage"]/ol/li')
 	cnt = len(lis)
 	i=0
-	print "count:",cnt
+	logging.debug("fetch count: %d from %s" % (cnt, url))
 	for li in lis:
 		source_link = li.xpath('./a[@class="StoryUrl"]/@href').extract()
 		title = li.xpath('./a[@class="StoryUrl"]/@story_title').extract()

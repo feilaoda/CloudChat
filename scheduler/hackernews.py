@@ -5,19 +5,15 @@ import requests
 import re
 from datetime import datetime, timedelta
 import time
+import logging
 from scrapy import Selector
-
+from .fetch import fetch
 from news import session, delete_news,save_news,save_cache
 
 hackernews_url = 'https://news.ycombinator.com/news'
 
 Site="HackerNews"
 
-def fetch(url):
-	response = requests.get(url, timeout=60)
-	if response.status_code != requests.codes.ok:
-	    return dict(code=response.status_code)
-	return dict(code=200, html=response.text)
 
 
 def fetch_news(url, news_list):
@@ -30,8 +26,8 @@ def fetch_news(url, news_list):
 	trs = hxs.xpath('//body/center/table/tr[3]/td/table/tr')
 	cnt = len(trs)
 	i=0
-	print "count:",cnt
-	
+	logging.debug("fetch count: %d from %s" % (cnt/3, url))
+
 	while i<cnt:
 		tr0 = trs[i]
 		source_link = tr0.xpath('./td[@class="title"]/a/@href').extract()
