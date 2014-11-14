@@ -4,7 +4,7 @@ import sys
 import datetime
 import logging
 
-logging.basicConfig(format='%(levelname)s:%(thread)d:%(message)s', level=logging.DEBUG)
+logging.basicConfig(filename="scheduler.log", format='%(levelname)s:%(thread)d:%(message)s', level=logging.DEBUG)
 
 
 PROJDIR = os.path.abspath(os.path.dirname(__file__))
@@ -37,4 +37,4 @@ scheduler.start()
 
 # hackernews_run()
 # producthunt_run()
-designernews_run()
+# designernews_run()
