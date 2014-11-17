@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import time
 from scrapy import Selector
 from .fetch import fetch
-from news import session, delete_news,save_news,save_cache, update_sites
+from news import session, delete_news,save_news,save_cache, update_sites,reset_news
 
 hackernews_url = 'https://news.layervault.com/'
 
@@ -121,6 +121,7 @@ def run():
 		news['sorts'] = last_timestamp
 		last_timestamp -= 1
 
+	
 	save_news(Site,news_list)
 	update_sites(Site)
 	#save_cache(Site, news_list)

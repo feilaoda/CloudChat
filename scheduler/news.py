@@ -1,6 +1,7 @@
 
 import json
 import redis
+import time
 from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -51,7 +52,15 @@ def delete_news(site_id):
 	db.execute("delete from news where site = '%s'"%site_id)
 	db.commit()
 	db.close()
-	
+
+def reset_news(site_id, last_time, day):
+	last_timestamp = int(time.mktime(last_time.timetuple()))
+	db = session()
+	db.execute("update news set sorts = %d where site = '%s' and create_at='%s'"%(last_timestamp, site_id, day))
+	db.commit()
+	db.close()
+
+
 def save_news(site,news_list, page=None):
 	db = session()
 	for item in news_list:
