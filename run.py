@@ -28,7 +28,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 scheduler = BlockingScheduler()
 
-now = datetime.datetime.now()
+now = datetime.datetime.utcnow()
 now = now + datetime.timedelta(seconds=10)
 scheduler.add_job(hackernews_run,'interval', minutes=6,  id='hackernews', next_run_time=now)
 scheduler.add_job(producthunt_run,'interval', minutes=6,  id='producthunt', next_run_time=now)
