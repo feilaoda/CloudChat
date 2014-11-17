@@ -5,7 +5,8 @@ import requests
 import re
 from scrapy import Selector
 from .fetch import fetch
-from news import session, delete_news,save_news, save_cache
+from datetime import datetime
+from news import session, delete_news,save_news, save_cache, update_sites
 
 site_url = 'http://www.producthunt.com/'
 
@@ -89,5 +90,6 @@ def run():
 		news.extend(lst)
 
 	save_cache(Site, news)
+	update_sites(Site, datetime.now())
 
 

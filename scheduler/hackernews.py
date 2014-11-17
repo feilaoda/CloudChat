@@ -8,7 +8,7 @@ import time
 import logging
 from scrapy import Selector
 from .fetch import fetch
-from news import session, delete_news,save_news,save_cache
+from news import session, delete_news,save_news,save_cache, update_sites
 
 hackernews_url = 'https://news.ycombinator.com/news'
 
@@ -98,7 +98,7 @@ def fetch_news(url, news_list):
 		news['url'] = news_link
 		news['createAt'] = None
 		# print link, title, points, comments, news_link
-		print news
+		logging.debug(news)
 		news_list.append(news)
 		i+=3
 
@@ -124,5 +124,6 @@ def run():
 		last_timestamp -= 1
 
 	save_news(Site,news_list)
+	update_sites(Site, now)
 	#save_cache(Site, news_list)
 

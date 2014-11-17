@@ -1,6 +1,7 @@
 
 import json
 import redis
+from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -22,6 +23,15 @@ pool = redis.ConnectionPool(host=settings.redis_host, port=settings.redis_port)
 client =  redis.Redis(connection_pool=pool)
 
 
+class NewsSite(Base):
+    __tablename__ = 'news_site'
+    id = Column(Integer, primary_key=True)
+    uri = Column(String)
+    name = Column(String)
+    sorts = Column(Integer)
+    create_at = Column(DateTime)
+
+
 class News(Base):
     __tablename__ = 'news'
     id = Column(Integer, primary_key=True)
@@ -40,7 +50,8 @@ def delete_news(site_id):
 	db = session()
 	db.execute("delete from news where site = '%s'"%site_id)
 	db.commit()
-
+	db.close()
+	
 def save_news(site,news_list, page=None):
 	db = session()
 	for item in news_list:
@@ -62,7 +73,7 @@ def save_news(site,news_list, page=None):
 
 		db.add(news)
 	db.commit()
-	
+	db.close()
 	return len(news_list)
 
 def save_cache(site, news_list):
@@ -81,4 +92,18 @@ def save_cache(site, news_list):
 	key = 'news:'+site+":count"
 	client.set(key, size)
 
+def update_sites(name, now=None):
+	print "update sites"
+	if now is None:
+		now = datetime.now()
+	db = session()
+	news_site = db.query(NewsSite).filter_by(name=name).first()
+	if news_site:
+		print "site time: ", news_site.name, now
+		news_site.create_at = now
+		db.add(news_site)
+		db.commit()
+		db.close()
+	else:
+		print "update site error, site is None !!!"
 

@@ -4,7 +4,7 @@ import re
 import logging
 from datetime import datetime, timedelta
 import time
-from news import delete_news,save_news, save_cache
+from news import delete_news,save_news, save_cache, update_sites
 
 from .fetch import fetch
 
@@ -70,7 +70,7 @@ def run():
 	fetch_data(now)
 	fetch_data(yesterday)
 
-
+	update_sites(Site, now)
 
 
 

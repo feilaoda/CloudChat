@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import time
 from scrapy import Selector
 from .fetch import fetch
-from news import session, delete_news,save_news,save_cache
+from news import session, delete_news,save_news,save_cache, update_sites
 
 hackernews_url = 'https://news.layervault.com/'
 
@@ -39,7 +39,7 @@ def fetch_news(url, news_list):
 		
 		nid = None
 		if len(source_link)>0:
-			print source_link
+			#print source_link
 			m = re.findall('(\d+)', source_link[0])
 			if len(m)>0:
 				nid = m[0]
@@ -97,7 +97,7 @@ def fetch_news(url, news_list):
 		news['url'] = comments_link
 		news['createAt'] = None
 		# print link, title, points, comments, news_link
-		print news
+		#print news
 		news_list.append(news)
 		
 
@@ -122,5 +122,6 @@ def run():
 		last_timestamp -= 1
 
 	save_news(Site,news_list)
+	update_sites(Site)
 	#save_cache(Site, news_list)
 
