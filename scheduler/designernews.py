@@ -81,6 +81,7 @@ def fetch_news(url, news_list):
 
 		if len(comments_link)>0:
 			comments_link = comments_link[0]
+			comments_link = "https://news.layervault.com/"+ comments_link
 		else:
 			comments_link = None
 
