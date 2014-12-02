@@ -12,7 +12,7 @@ from news import session, delete_news,save_news,save_cache, update_sites,reset_n
 
 hackernews_url = 'https://news.ycombinator.com/news'
 
-Site="HackerNews"
+Site="hackernews"
 
 
 

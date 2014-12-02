@@ -37,7 +37,7 @@ class News(Base):
     __tablename__ = 'news'
     id = Column(Integer, primary_key=True)
     site = Column(String)
-    news_id = Column(Integer)
+    news_id = Column(String)
     title = Column(String)
     sub_title = Column(String)
     source_url = Column(String)

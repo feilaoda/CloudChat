@@ -10,7 +10,7 @@ from news import session, delete_news,save_news, save_cache, update_sites
 
 site_url = 'http://www.producthunt.com/'
 
-Site="ProductHunt"
+Site="producthunt"
 
 
 
