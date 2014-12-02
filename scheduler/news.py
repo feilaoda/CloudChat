@@ -106,7 +106,7 @@ def update_sites(name, now=None):
 	if now is None:
 		now = datetime.now()
 	db = session()
-	news_site = db.query(NewsSite).filter_by(name=name).first()
+	news_site = db.query(NewsSite).filter_by(uri=name).first()
 	if news_site:
 		print "site time: ", news_site.name, now
 		news_site.create_at = now

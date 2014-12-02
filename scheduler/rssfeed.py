@@ -2,11 +2,15 @@ import os
 import feedparser
 import re
 import time
+import calendar
 from datetime import datetime
 
 from news import session, delete_news,save_news,save_cache, update_sites,reset_news
 
 from settings import load_config
+import pytz
+
+tz = pytz.timezone('Asia/Shanghai')
 
 def fetch_feed(site, url, id_pattern=None):
 	print "fetch %s"%site
@@ -36,13 +40,18 @@ def fetch_feed(site, url, id_pattern=None):
 		news['commentCount'] = 0
 		news['url'] = entry['link']
 		news['sorts'] = int(time.mktime(entry['published_parsed']))
-		news['createAt'] = datetime.fromtimestamp(time.mktime(entry['published_parsed']))
+		createAt = datetime.fromtimestamp(calendar.timegm(entry['published_parsed']), tz=tz)
+		news['createAt'] = createAt.strftime("%Y-%m-%d %H:%M:%S")
 		news_list.append(news)
+		# print news['createAt'], entry['published'], entry['published_parsed']
 	save_news(site, news_list)
+	update_sites(site, datetime.now())
 
 def run():
 	config = load_config("rss.yaml")
 	for site in config.sites:
 		fetch_feed(site.name, site.feed)	
 
+
+run()
 
