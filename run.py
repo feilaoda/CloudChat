@@ -17,7 +17,6 @@ except ImportError:
     print('Development of keepcd')
 
 
-import settings
 
 from scheduler.hackernews import run as hackernews_run
 from scheduler.producthunt_api import run as producthunt_run
