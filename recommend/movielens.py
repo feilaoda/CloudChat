@@ -48,8 +48,8 @@ from math import sqrt
   
 def load_data():  
       
-    filename_user_movie = 'data/u.data'  
-    filename_movieInfo = 'data/u.item'  
+    filename_user_movie = '/Users/feilaoda/Downloads/ml-100k/u.data'  
+    filename_movieInfo = '/Users/feilaoda/Downloads/ml-100k/u.item'  
   
   
     user_movie = {}  
@@ -175,4 +175,3 @@ if __name__ == "__main__":
     # display recommend result (top-10 results)  
     for i, rating in pred:  
         print 'film: %s,  rating: %s' % (movies[i], rating)  
-        
